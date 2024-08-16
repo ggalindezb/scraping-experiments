@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.632.0",
+    "@aws-sdk/credential-providers": "^3.632.0",
+    "puppeteer": "^22.8.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "type": "module",
+  "scripts": {
+    "build-function": "zip -x .git/\\* -x node_modules/\\* -x .gitignore -x layer.zip -r function.zip .",
+    "build-layer": "rm -rf nodejs && mkdir nodejs && cp -r node_modules/ nodejs && zip -x .git/\\* -x .gitignore -x function.zip -r layer.zip nodejs && rm -rf nodejs",
+    "build": "npm run build-function && npm run build-layer",
+    "clean": "rm function.zip && rm layer.zip"
+  }
+}

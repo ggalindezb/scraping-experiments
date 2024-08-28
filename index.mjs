@@ -1,42 +1,19 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { S3 } from "@aws-sdk/client-s3";
-import { fromEnv } from "@aws-sdk/credential-providers";
-import crypto from "crypto";
+import { pushToS3 } from './utils.js';
+import { buildPuppeteer, postResults } from './puppeteerConfig.js'
 
-import scrapeHouzz from './houzz.mjs';
+export const handler = async (event, _context) => {
+  const { url } = event;
 
-const scrapers = {
-  houzz: scrapeHouzz
-}
+  const [browser, page] = await buildPuppeteer(url, event.test);
 
-export const handler = async (event, context) => {
-  const { url, type } = event;
+  await page.locator('.reviews-list').wait();
+  await page.waitForSelector('.reviews-list');
+  const html = await page.content();
+  await browser.close();
 
-  // puppeteer.use(StealthPlugin());
-  // const browser = await puppeteer.launch({headless: false});
-  // const page = await browser.newPage();
-
-  // await page.setViewport({width: 412, height: 915});
-  // await page.goto(url);
-  // const html = await scrapers[type](page);
-  // await browser.close();
-  const html = '<html><body><p>123</p></body></html>'
-
-  const s3Client = new S3({
-    region: "us-east-1",
-    credentials: fromEnv()
-  });
-
-  const fileName = 'Sample.html';
-  const input = {
-    Bucket: process.env.S3_BUCKET,
-    Key: fileName,
-    Body: html
-  };
-  await s3Client.putObject(input);
+  const s3Url = await postResults(html, event.test)
 
   return {
-    pageSourceUrl: `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${fileName}`
+    pageSourceUrl: s3Url
   };
 };

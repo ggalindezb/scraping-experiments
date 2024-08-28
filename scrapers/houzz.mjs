@@ -1,3 +1,5 @@
+import { delay, debug } from './utils.js';
+
 export default async function scrapeHouzz(page) {
   await page.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
 

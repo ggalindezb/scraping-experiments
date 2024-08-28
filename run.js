@@ -1,11 +1,17 @@
 import { handler } from './index.mjs';
 
+const URLS = {
+  chromeHeadless: 'https://arh.antoinevastel.com/bots/areyouheadless',
+  etsy: 'https://www.etsy.com/shop/lolabeanjewelry/reviews'
+}
+
+const LOCAL_URLS = {
+  etsy: 'http://localhost:8000/etsy.html',
+}
+
 const event = {
-  url: 'https://www.houzz.com/professionals/appliances/aj-madison-pfvwus-pf~1887771251',
-  type: 'houzz',
-  config: {
-    headless: false
-  }
+  url: URLS.etsy,
+  test: true,
 }
 
 const context = {}

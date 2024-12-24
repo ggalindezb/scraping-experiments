@@ -21,7 +21,7 @@ const fetchViewport = (viewport = 'mobile') => {
   return selectedViewport[Math.floor(Math.random() * selectedViewport.length)]
 }
 
-export const puppeteerConfig = (test) => {
+const puppeteerParams = (test) => {
   const testMode = test ?? false;
 
   if(testMode) {
@@ -37,7 +37,7 @@ export const puppeteerConfig = (test) => {
 
 export const buildPuppeteer = async (url, viewport, test) => {
   puppeteer.use(StealthPlugin());
-  const browser = await puppeteer.launch(puppeteerConfig(test))
+  const browser = await puppeteer.launch(puppeteerParams(test))
   const page = await browser.newPage()
 
   await page.setViewport(fetchViewport(viewport))

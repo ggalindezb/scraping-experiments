@@ -17,14 +17,6 @@ export function debug(page) {
    });
 }
 
-export const postResults = async (type, html, test) => {
-  const timestamp = new Date().toISOString();
-  const label = `${type}_${timestamp}`
-  const filename = label.replace(/https:\/\/|http:\/\//, '').replace(/[:&\?=]/, '').replace(/[\/.]/g, '-').replace(/[:]g/)
-
-  return filename;
-}
-
 export async function pushToS3(text) {
   const s3Client = new S3({
     region: "us-east-1",

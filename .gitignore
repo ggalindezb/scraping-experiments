@@ -2,3 +2,5 @@ function.zip
 layer.zip
 node_modules/**/*
 .envrc
+*.html
+*.png

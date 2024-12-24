@@ -14,15 +14,15 @@ const extractReview = (node) => {
   let grade = node.querySelector(selectors.grade).textContent.match(/.*(\d).*(\d)/)[1].trim()
   let description = node.querySelector(selectors.description).textContent.trim()
   let date = node.querySelector(selectors.date).textContent.trim()
-  console.log({ name, grade, description, date})
 
   return { name, grade, description, date}
 }
 
-export const parseHouzz = (html) => {
+const parseHouzz = (html) => {
   const dom = new JSDOM(html);
   const reviewNodes = [...dom.window.document.querySelectorAll(selectors.reviews)]
-  console.log(`nodes: ${reviewNodes.length}`)
 
   return reviewNodes.map(node => extractReview(node))
 }
+
+export default parseHouzz

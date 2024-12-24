@@ -1,19 +1,19 @@
-import { pushToS3 } from './utils.js';
-import { buildPuppeteer, postResults } from './puppeteerConfig.js'
+import { buildPuppeteer } from './puppeteerConfig.js'
+import scrapeHouzz from './scrapers/houzz.mjs'
+import { parseHouzz } from './parsers/houzz.js'
+import {delay} from './utils.js'
+import fs from 'fs'
 
 export const handler = async (event, _context) => {
-  const { url } = event;
+  const { url, viewport, test } = event
 
-  const [browser, page] = await buildPuppeteer(url, event.test);
+  const [browser, page] = await buildPuppeteer(url, viewport, test)
 
-  await page.locator('.reviews-list').wait();
-  await page.waitForSelector('.reviews-list');
-  const html = await page.content();
-  await browser.close();
+  const reviewsHtml = await scrapeHouzz(page)
+  fs.writeFileSync('html.html', reviewsHtml, 'utf8');
+  // await delay(4000)
+  await browser.close()
+  const reviews = parseHouzz(reviewsHtml)
 
-  const s3Url = await postResults(html, event.test)
-
-  return {
-    pageSourceUrl: s3Url
-  };
+  return reviews
 };

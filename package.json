@@ -2,6 +2,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.632.0",
     "@aws-sdk/credential-providers": "^3.632.0",
+    "jsdom": "^25.0.1",
     "puppeteer": "^22.8.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"

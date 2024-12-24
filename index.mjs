@@ -1,19 +1,17 @@
-import { buildPuppeteer } from './puppeteerConfig.js'
+import { buildPuppeteer, wrapUpTest } from './puppeteerConfig.js'
 import scrapeHouzz from './scrapers/houzz.mjs'
-import { parseHouzz } from './parsers/houzz.js'
-import {delay} from './utils.js'
-import fs from 'fs'
+import parseHouzz from './parsers/houzz.js'
 
 export const handler = async (event, _context) => {
-  const { url, viewport, test } = event
-
+  const { url, type, viewport, test } = event
   const [browser, page] = await buildPuppeteer(url, viewport, test)
 
-  const reviewsHtml = await scrapeHouzz(page)
-  fs.writeFileSync('html.html', reviewsHtml, 'utf8');
-  // await delay(4000)
-  await browser.close()
-  const reviews = parseHouzz(reviewsHtml)
+  const html = await scrapeHouzz(page)
+  const reviews = parseHouzz(html)
 
-  return reviews
+  if(test)
+    await wrapUpTest(page, type, html)
+  await browser.close()
+
+  return JSON.stringify(reviews)
 };

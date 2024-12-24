@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import fs from 'fs/promises'
 
 const fetchViewport = (viewport = 'mobile') => {
   const viewports = {
@@ -27,28 +28,36 @@ export const puppeteerConfig = (test) => {
     return {
       headless: false,
       slowMo: 250,
-      devtools: true,
-    };
+      devtools: true
+    }
   } else {
-    return {};
+    return {}
   }
 }
 
 export const buildPuppeteer = async (url, viewport, test) => {
   puppeteer.use(StealthPlugin());
-  const browser = await puppeteer.launch(puppeteerConfig(test));
-  const page = await browser.newPage();
+  const browser = await puppeteer.launch(puppeteerConfig(test))
+  const page = await browser.newPage()
 
-  await page.setViewport(fetchViewport(viewport));
-  await page.goto(url);
+  await page.setViewport(fetchViewport(viewport))
+  await page.goto(url)
 
-  return [browser, page];
+  return [browser, page]
 }
 
-export const postResults = async (url, html, test) => {
-  const timestamp = new Date().toISOString();
-  const label = `${url}_${timestamp}`
-  const filename = label.replace(/https:\/\/|http:\/\//, '').replace(/[:&\?=]/, '').replace(/[\/.]/g, '-').replace(/[:]g/)
+function writeHtmlFile(label, html) {
+  fs.writeFile(`${label}.html`, html, 'utf-8')
+}
 
-  return filename;
+async function saveScreenshots(label, page) {
+  await page.screenshot({ path: `${label}.png`, fullPage: true })
+}
+
+export const wrapUpTest = async (page, type, html) => {
+  const timestamp = new Date().toISOString()
+  const label = `${type}_${timestamp}`
+
+  await saveScreenshots(label, page)
+  writeHtmlFile(label, html)
 }

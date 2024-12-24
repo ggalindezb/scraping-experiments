@@ -7,26 +7,12 @@ const URLS = {
   houzzFlooring: 'https://www.houzz.com/professionals/flooring-contractors/mysha-s-flooring-company-pfvwus-pf~1796818102'
 }
 
-// const LOCAL_URLS = {
-//   etsy: 'http://localhost:8000/etsy.html'
-// }
-
+const [_proc, _file, type, test] = process.argv
 const event = {
-  url: URLS.houzzFlooring,
-  type: 'houzz',
+  url: URLS[type],
+  type,
   viewport: 'mobile',
-  test: false,
+  test: test === 'test',
 }
-
-// const runFromFile = () => {
-//   const { default: fs } = await import("fs")
-//   const { default: jsdom } = await import("jsdom")
-//   const { JSDOM } = jsdom
-
-//   const html = fs.readFileSync('html.html', 'utf8')
-//   const dom = new JSDOM(html);
-// }
-
 const context = {}
 console.log(await handler(event, context));
-
